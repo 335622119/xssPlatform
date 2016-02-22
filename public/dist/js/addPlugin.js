@@ -1,9 +1,9 @@
 function addPlugin(url){
     $.post(url, $("#addPluginForm").serialize()+mainEditor.doc.getValue(), function(res){
-        if (res == 'success'){
+        if (res.status == 'success'){
             alert('success!');
         }else {
-            alert('failed');
+            alert(res.msg);
         }
     });
 }

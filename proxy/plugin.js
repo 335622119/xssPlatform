@@ -23,3 +23,7 @@ exports.addPlugin = function (name, introduce, code, callback){
 
     plugin.save(callback);
 };
+
+exports.getNamesByQuery = function (query,opt,callback){
+    Plugin.find(query, '', opt, callback);
+};
