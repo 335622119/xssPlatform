@@ -1,0 +1,113 @@
+<script src="dist/js/activeSider.js"></script>
+<script src="plugins/jQuery/jQuery-2.1.4.min.js"></script>
+<input type="hidden" value="<%= changeItem %>" id="newid">
+<aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+        <!-- Sidebar user panel -->
+        <div class="user-panel">
+            <div class="pull-left image">
+                <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+            </div>
+            <div class="pull-left info">
+                <p>Alexander Pierce</p>
+                <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+            </div>
+        </div>
+        <!-- search form -->
+        <form action="#" method="get" class="sidebar-form">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Search...">
+              <span class="input-group-btn">
+                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
+              </span>
+            </div>
+        </form>
+        <!-- /.search form -->
+        <!-- sidebar menu: : style can be found in sidebar.less -->
+        <ul class="sidebar-menu">
+            <li class="header">MAIN NAVIGATION</li>
+            <!--项目列表-->
+            <li class="active treeview" id="project">
+                <a href="#">
+                    <i class="fa fa-dashboard"></i> <span>项目列表</span> <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li class="active" id="DynamicProject"><a href="/DynamicProject"><i class="fa fa-circle-o"></i> 动态项目列表</a></li>
+                    <li id="StaticProject"><a href="/StaticProject"><i class="fa fa-circle-o"></i> 静态项目列表</a></li>
+                </ul>
+            </li>
+            <!--主机列表-->
+            <li class="treeview" id="PC">
+                <a href="#">
+                    <i class="fa fa-files-o"></i>
+                    <span>主机列表</span> <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li id="DynamicPC"><a href="/DynamicPC"><i class="fa fa-circle-o"></i> 动态项目主机</a></li>
+                    <li id="StaticPC"><a href="/StaticPC"><i class="fa fa-circle-o"></i> 静态项目主机</a></li>
+                </ul>
+            </li>
+            <!--插件管理-->
+            <li class="treeview" id="plugins">
+                <a href="/plugin">
+                    <i class="fa fa-th"></i> <span>插件管理</span>
+                </a>
+            </li>
+            <!--上线提醒-->
+            <li class="treeview" id="notice">
+                <a href="/notice">
+                    <i class="fa fa-pie-chart"></i>
+                    <span>上线提醒</span>
+                </a>
+
+            </li>
+            <!--编码转换-->
+            <li class="treeview" id="coding">
+                <a href="/coding">
+                    <i class="fa fa-laptop"></i>
+                    <span>编码转换</span>
+                </a>
+            </li>
+            <!--成员管理-->
+            <li class="treeview" id="user">
+                <a href="/users">
+                    <i class="fa fa-laptop"></i>
+                    <span>成员管理</span>
+                </a>
+            </li>
+            <!--信息统计-->
+            <li class="treeview" id="information">
+                <a href="/information">
+                    <i class="fa fa-laptop"></i>
+                    <span>信息统计</span>
+                </a>
+            </li>
+            <!--使用文档-->
+            <li class="treeview" id="document">
+                <a href="/document">
+                    <i class="fa fa-laptop"></i>
+                    <span>使用文档</span>
+                </a>
+            </li>
+            <!--系统设置-->
+            <li class="treeview" id="settings">
+                <a href="/settings">
+                    <i class="fa fa-laptop"></i>
+                    <span>系统设置</span>
+                </a>
+            </li>
+            <li class="header">LABELS</li>
+            <li><a href="#"><i class="fa fa-circle-o text-red"></i> <span>Important</span></a></li>
+            <li><a href="#"><i class="fa fa-circle-o text-yellow"></i> <span>Warning</span></a></li>
+            <li><a href="#"><i class="fa fa-circle-o text-aqua"></i> <span>Information</span></a></li>
+        </ul>
+    </section>
+    <!-- /.sidebar -->
+</aside>
+
+<script>
+    newid = $('#newid').val();
+    activeC(newid);
+
+</script>

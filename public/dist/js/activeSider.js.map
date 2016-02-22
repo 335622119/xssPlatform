@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "activeSider.js",
+  "sourceRoot": "",
+  "sources": [
+    "activeSider.coffee"
+  ],
+  "names": [],
+  "mappings": ";AAAA;EAAA,MAAM,CAAC,OAAP,GAAiB,SAAC,KAAD;AACf,QAAA;IAAA,KAAA,GAAQ,KAAK,CAAC,KAAN,CAAY,GAAZ;IACR,CAAA,CAAE,uBAAF,CAA0B,CAAC,WAA3B,CAAuC,QAAvC;AACA,SAAA,uCAAA;;MACE,EAAA,GAAK,GAAA,GAAI;MACT,CAAA,CAAE,EAAF,CAAK,CAAC,QAAN,CAAe,QAAf;AAFF;EAHe;AAAjB"
+}
