@@ -1,22 +1,35 @@
 var eventproxy = require('eventproxy');
 var Project = require('../proxy').project;
+var Plugin = require('../proxy').Plugin;
 var validator = require('validator');
+var crypto = require('crypto');
+var config = require('../config');
 
 exports.DynamicIndex = function(req, res, next){
     var ep = new eventproxy();
+    ep.all('project','plugin',function(project, plugin){
+        res.render('pages/project',{
+            changeItem: 'project,DynamicProject',
+            projectList: project,
+            pluginList: plugin
+        });
+    });
     ep.fail(next);
-    //show plugin
+    //show project
     //[{name:,age:,gejk},{},{}]
     Project.getNamesByDynamicQuery({},{},function(err, data){
         if(err){
             return next(err);
         }
         //show webviews
-        console.log(data);
-        res.render('pages/project',{
-            changeItem: 'project,DynamicProject',
-            projectList: data
-        });
+        ep.emit('project', data);
+    });
+    //get plugin
+    Plugin.getNamesByQuery({},{},function(err, data){
+        if(err){
+            return next(err);
+        }
+        ep.emit('plugin',data);
     });
 
 };
@@ -27,8 +40,8 @@ exports.addDynamicProject = function(req, res, next){
     var projectIntro = validator.trim(req.body.projectIntro);
     //正确性验证
     var ep = new eventproxy();
-    ep.all('',function (){
-        Project.addDynamicProject(projectName, projectIntro, function (err){
+    ep.all('address','onlyname',function(address){
+        Project.addDynamicProject(projectName, projectIntro, address, function (err){
             if(err){
                 return next(err);
             }
@@ -53,11 +66,27 @@ exports.addDynamicProject = function(req, res, next){
         return;
     }
 
+    Project.getNamesByDynamicQuery({name: projectName},{},function(err, projects){
+        if(err){
+            return next(err);
+        }
+        if(projects.length > 0){
+            ep.emit('prop_err','项目名称重复');
+            return;
+        }else{
+            ep.emit('onlyname');
+        }
+    });
+    //生成地址
+    var data = projectName;
+    var cipher = crypto.createCipher(config.cryptionAlgorithm, config.cryptionKey);
+    var crypted = cipher.update(data, 'utf-8', 'hex');
+    crypted += cipher.final('hex');
+    ep.emit('address', crypted);
 };
 
 exports.verifyName = function(req,res,next){
     //验证数据的唯一性
-    console.log(req.query.name);
 
     var projectName = validator.trim(req.query.name);
     Project.getNamesByDynamicQuery({name: projectName},{},function(err, projects){

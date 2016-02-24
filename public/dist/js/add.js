@@ -9,6 +9,10 @@ function addPlugin(url){
 }
 
 function addProject(url){
+    if($('#projectNameDiv').attr('class') != 'form-group has-success'){
+        alert('请注意红色提示!');
+        return;
+    }
     $.post(url, $("#addProjectForm").serialize(), function(res){
         if (res.status == 'success'){
             alert('success!');
@@ -18,24 +22,24 @@ function addProject(url){
     });
 }
 
-function verifyName(){
-    if($('#projectName').val() == ''){
-        $("#projectNameDiv").removeClass("has-error");
-        $("#projectNameDiv").removeClass("has-success");
-        $("#projectAlert").html("");
+function verifyName(name){
+    if ($('#' + name + 'Name').val() == '') {
+        $('#' + name + 'NameDiv').removeClass("has-error");
+        $("#" + name + "NameDiv").removeClass("has-success");
+        $("#" + name + "Alert").html("");
         return;
     }
-    $.get('/verifyName?name='+$('#projectName').val(),function(res){
+    $.get('/verifyName?name='+$('#'+name+'Name').val(),function(res){
         if(res == 'success') {
-            $("#projectNameDiv").removeClass("has-error");
-            $('#projectNameDiv').addClass('has-success');
-            $('#projectitle').css('color', 'black');
-            $("#projectAlert").html("恭喜可以使用此名称!");
+            $('#'+name+'NameDiv').removeClass("has-error");
+            $('#'+name+'NameDiv').addClass('has-success');
+            $('#'+name+'title').css('color', 'black');
+            $('#'+name+'Alert').html("恭喜可以使用此名称!");
         }else{
-            $("#projectNameDiv").removeClass("has-success");
-            $('#projectNameDiv').addClass('has-error');
-            $('#projectitle').css('color', 'black');
-            $("#projectAlert").html("对不起,名称已重复!");
+            $('#'+name+'NameDiv').removeClass("has-success");
+            $('#'+name+'NameDiv').addClass('has-error');
+            $('#'+name+'title').css('color', 'black');
+            $('#'+name+'Alert').html("对不起,名称已重复!");
         }
-    })
+    });
 }
