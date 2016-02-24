@@ -7,3 +7,13 @@ function addPlugin(url){
         }
     });
 }
+
+function addProject(url){
+    $.post(url, $("#addProjectForm").serialize(), function(res){
+        if (res.status == 'success'){
+            alert('success!');
+        }else {
+            alert(res.msg);
+        }
+    });
+};

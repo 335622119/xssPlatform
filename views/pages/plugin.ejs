@@ -343,21 +343,16 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td>Trident</td>
-                                    <td>Internet
-                                        Explorer 4.0</td>
-                                    <td>Win 95+</td>
-                                    <td> 4</td>
-                                    <td>X</td>
-                                </tr>
-                                <tr>
-                                    <td>Misc</td>
-                                    <td>PSP browser</td>
-                                    <td>PSP</td>
-                                    <td>-</td>
-                                    <td>C</td>
-                                </tr>
+                                <% pluginList.forEach(function (plugin){ %>
+                                    <tr>
+                                        <td><%= plugin.name %></td>
+                                        <td>Internet
+                                            Explorer 4.0</td>
+                                        <td>Win 95+</td>
+                                        <td> 4</td>
+                                        <td>X</td>
+                                    </tr>
+                                <%}); %>
                                 <tr>
                                     <td>Other browsers</td>
                                     <td>All others</td>
@@ -570,7 +565,7 @@
 <script src="dist/js/matchBrackets.js"></script>
 <script src="dist/js/javascript-hint.js"></script>
 <!-- addPlugin -->
-<script src="dist/js/addPlugin.js"></script>
+<script src="dist/js/add.js"></script>
 
 <!-- page script -->
 <script>

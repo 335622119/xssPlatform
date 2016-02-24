@@ -2,18 +2,25 @@ var eventproxy = require('eventproxy');
 var validator = require('validator');
 var Plugin = require('../proxy').Plugin;
 
+
 exports.index = function(req, res, next){
-    that = this;
     var ep = new eventproxy();
-    ep.all('testDb', function(testdb){
-        res.render('pages/plugin',{
-            changeItem: 'plugins',
-            name: testdb
+    ep.fail(next);
+    //show plugin
+    //[{name:,age:,gejk},{},{}]
+    (ep.done(function (){
+        Plugin.getNamesByQuery({},{},function(err, data){
+            if(err){
+                return next(err);
+            }
+            //show webviews
+            res.render('pages/plugin', {
+                changeItem: 'plugin',
+                pluginList: data
+            });
         });
-    });
-    Plugin.testDb(1, function (name){
-        ep.emit('testDb', name);
-    });
+    }))();
+    //获取项目地址
 
 };
 
@@ -26,6 +33,7 @@ exports.addPlugin = function (req, res, next){
 
     ep.fail(next);
     ep.on('prop_err', function (msg){
+        res.status(422);
         res.send({status:'failed', msg: msg});
     });
     //开始验证
@@ -49,20 +57,14 @@ exports.addPlugin = function (req, res, next){
         if(plugins.length > 0){
             ep.emit('prop_err', '插件名称存在');
             return;
+        }else{
+            Plugin.addPlugin(pluginName, pluginIntro, req.body.pluginCode, function (err){
+                if(err){
+                    return next(err);
+                }
+                res.send({status:'success'});
+            });
         }
     });
-    //验证成功后
-    (ep.done(function (){
-        Plugin.addPlugin(pluginName, pluginIntro, req.body.pluginCode, function (err){
-            if(err){
-                return next(err);
-            }
-            res.send({status:'success'});
-        });
-    }))();
-
-
-
-
 
 };

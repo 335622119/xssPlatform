@@ -13,7 +13,8 @@ mongoose.connect(config.db, {
 
 //models
 require('./plugin');
+require('./DynamicProject');
 
 exports.Plugin = mongoose.model('Plugin');
-
+exports.DynamicProject = mongoose.model('DynamicProject');
 

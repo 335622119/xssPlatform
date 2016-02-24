@@ -1,5 +1,6 @@
 var express = require('express');
 var plugin = require('../controllers/plugin');
+var project = require('../controllers/project');
 
 var router = express.Router();
 
@@ -20,25 +21,26 @@ router.get('/logout', function(req, res, next) {
     res.render('index', { title: 'Express' });
 });
 
-router.get('/DynamicProject', function(req, res, next) {
-    res.render('pages/project', { title: 'Express', changeItem: 'project,DynamicProject' });
-});
+//project router
+router.get('/DynamicProject', project.DynamicIndex);
+router.post('/addDynamicProject', project.addDynamicProject);
+router.get('/StaticProject', project.StaticIndex);
 
-router.get('/StaticProject', function(req, res, next) {
-    res.render('pages/project', { title: 'Express', changeItem: 'project,StaticProject' });
-});
 
+//PC router
 router.get('/DynamicPC', function(req, res, next) {
     res.render('pages/PC', { title: 'Express', changeItem: 'PC,DynamicPC' });
 });
-
 router.get('/StaticPC', function(req, res, next) {
     res.render('pages/PC', { title: 'Express', changeItem: 'PC,StaticPC' });
 });
 
+
+
 //plugin router
 router.get('/plugin', plugin.index);
 router.post('/addPlugin', plugin.addPlugin);
+
 
 router.get('/notice', function(req, res, next) {
     res.render('pages/notice', { title: 'Express', changeItem: 'notice' });
