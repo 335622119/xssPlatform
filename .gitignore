@@ -2,4 +2,4 @@
 test.*
 .DS_Store
 /.idea
-
+logs/my.log

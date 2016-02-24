@@ -33,7 +33,6 @@ exports.addPlugin = function (req, res, next){
 
     ep.fail(next);
     ep.on('prop_err', function (msg){
-        res.status(422);
         res.send({status:'failed', msg: msg});
     });
     //开始验证
