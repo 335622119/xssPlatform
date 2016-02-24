@@ -24,6 +24,7 @@ router.get('/logout', function(req, res, next) {
 //project router
 router.get('/DynamicProject', project.DynamicIndex);
 router.post('/addDynamicProject', project.addDynamicProject);
+router.get('/verifyName', project.verifyName);
 router.get('/StaticProject', project.StaticIndex);
 
 

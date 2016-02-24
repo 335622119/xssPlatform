@@ -8,9 +8,10 @@
       <div class="modal-body">
         <form role="form" id="addProjectForm" method="post" action="addProject">
           <div class="box-body">
-            <div class="form-group">
-              <label for="projectName">项目名称</label>
-              <input type="text" class="form-control" id="projectName" placeholder="Enter project name" name="projectName">
+            <div class="form-group" id="projectNameDiv">
+              <label for="projectName" id="projectitle">项目名称</label>
+              <label id="projectAlert" style="float: right"></label>
+              <input type="text" class="form-control" id="projectName" placeholder="Enter project name" name="projectName" onblur="verifyName();">
             </div>
             <div class="form-group">
               <label for="projectIntroduce">项目简介</label>

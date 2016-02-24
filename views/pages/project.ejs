@@ -302,36 +302,17 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>Trident</td>
-                        <td>Internet
-                          Explorer 4.0</td>
-                        <td>Win 95+</td>
-                        <td> 4</td>
-                        <td>X</td>
-                      </tr>
-                      <tr>
-                        <td>Test</td>
-                        <td>http://www.baidu.com/ser.js</td>
-                        <td>2015-04-03</td>
-                        <td>2015-04-03</td>
-                        <td>
-                          <a class="glyphicon glyphicon-edit" href="#"></a>
-                          <a class="glyphicon glyphicon-trash" href="#"></a>
-
-                        </td>
-                      </tr>
-
+                    <% projectList.forEach(function (project){ %>
+                    <tr>
+                      <td><%= project.name %></td>
+                      <td>Internet
+                        Explorer 4.0</td>
+                      <td>Win 95+</td>
+                      <td> 4</td>
+                      <td>X</td>
+                    </tr>
+                    <%}); %>
                     </tbody>
-                    <tfoot>
-                      <tr>
-                        <th>Rendering engine</th>
-                        <th>Browser</th>
-                        <th>Platform(s)</th>
-                        <th>Engine version</th>
-                        <th>CSS grade</th>
-                      </tr>
-                    </tfoot>
                   </table>
                 </div><!-- /.box-body -->
               </div><!-- /.box -->

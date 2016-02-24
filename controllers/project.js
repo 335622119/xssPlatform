@@ -7,19 +7,17 @@ exports.DynamicIndex = function(req, res, next){
     ep.fail(next);
     //show plugin
     //[{name:,age:,gejk},{},{}]
-    (ep.done(function (){
-        Project.getNamesByDynamicQuery({},{},function(err, data){
-            if(err){
-                return next(err);
-            }
-            //show webviews
-            console.log(data);
-            res.render('pages/project',{
-                changeItem: 'project,DynamicProject',
-                projectList: data
-            });
+    Project.getNamesByDynamicQuery({},{},function(err, data){
+        if(err){
+            return next(err);
+        }
+        //show webviews
+        console.log(data);
+        res.render('pages/project',{
+            changeItem: 'project,DynamicProject',
+            projectList: data
         });
-    }))();
+    });
 
 };
 
@@ -29,7 +27,14 @@ exports.addDynamicProject = function(req, res, next){
     var projectIntro = validator.trim(req.body.projectIntro);
     //正确性验证
     var ep = new eventproxy();
-
+    ep.all('',function (){
+        Project.addDynamicProject(projectName, projectIntro, function (err){
+            if(err){
+                return next(err);
+            }
+            res.send({status:'success'});
+        });
+    });
     ep.fail(next);
     ep.on('prop_err', function (msg){
         res.send({status:'failed', msg: msg});
@@ -47,23 +52,23 @@ exports.addDynamicProject = function(req, res, next){
         ep.emit('prop_err', '项目简介不能超过30个字符');
         return;
     }
+
+};
+
+exports.verifyName = function(req,res,next){
     //验证数据的唯一性
+    console.log(req.query.name);
+
+    var projectName = validator.trim(req.query.name);
     Project.getNamesByDynamicQuery({name: projectName},{},function(err, projects){
-        console.log(err);
         if(err){
             return next(err);
         }
         if(projects.length > 0){
-            ep.emit('prop_err', '插件名称存在');
+            res.send('failed');
             return;
-        }else{
-            Project.addDynamicProject(projectName, projectIntro, function (err){
-                if(err){
-                    return next(err);
-                }
-                res.send({status:'success'});
-            });
         }
+        res.send('success');
     });
 };
 
