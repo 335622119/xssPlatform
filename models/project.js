@@ -5,7 +5,8 @@ var projectSchema = new Schema({
     name: {type:String},
     introduce: {type: String},
     address: {type: String},
-    type: {type:String}
+    type: {type:String},
+    plugin_id:[{type:String}]
 });
 
 

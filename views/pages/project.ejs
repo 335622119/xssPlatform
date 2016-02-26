@@ -295,7 +295,7 @@
                     <thead>
                       <tr>
                         <th>项目名称</th>
-                        <th>项目地址</th>
+                        <th style="width: 400px">项目地址</th>
                         <th>创建时间</th>
                         <th>更新时间</th>
                         <th>操作</th>
@@ -305,8 +305,7 @@
                     <% projectList.forEach(function (project){ %>
                     <tr>
                       <td><%= project.name %></td>
-                      <td>Internet
-                        Explorer 4.0</td>
+                      <td>http://<%= host %>/<%= project.id %></td>
                       <td>Win 95+</td>
                       <td> 4</td>
                       <td>X</td>

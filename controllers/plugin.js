@@ -1,6 +1,6 @@
 var eventproxy = require('eventproxy');
 var validator = require('validator');
-var Plugin = require('../proxy').Plugin;
+var Plugin = require('../proxy').plugin;
 
 
 exports.index = function(req, res, next){

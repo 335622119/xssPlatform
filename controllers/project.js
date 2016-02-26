@@ -1,16 +1,18 @@
 var eventproxy = require('eventproxy');
 var Project = require('../proxy').project;
-var Plugin = require('../proxy').Plugin;
+var Plugin = require('../proxy').plugin;
 var validator = require('validator');
 var config = require('../config');
 
 exports.DynamicIndex = function(req, res, next){
     var ep = new eventproxy();
+    var host = req.header('host');
     ep.all('project','plugin',function(project, plugin){
         res.render('pages/project',{
             changeItem: 'project,DynamicProject',
             projectList: project,
-            pluginList: plugin
+            pluginList: plugin,
+            host: host
         });
     });
     ep.fail(next);
@@ -39,8 +41,9 @@ exports.addDynamicProject = function(req, res, next){
     var projectIntro = validator.trim(req.body.projectIntro);
     //正确性验证
     var ep = new eventproxy();
-    ep.all('onlyname',function(){
-        Project.addProject(projectName, projectIntro, 'Dynamic', function (err){
+    ep.all('plugin_id','onlyname',function(plugin_id){
+        console.log(plugin_id);
+        Project.addProject(projectName, projectIntro, 'Dynamic', plugin_id, function (err){
             if(err){
                 return next(err);
             }
@@ -77,7 +80,26 @@ exports.addDynamicProject = function(req, res, next){
             ep.emit('onlyname');
         }
     });
-    //生成地址
+
+    //保存 plugin id 到mongo
+    //获取id,形成对象数组,带入proxy.
+    var plugins = [];
+    var pluginName = req.body.pluginName;
+    pluginName.forEach(function(plugin){
+        var tmpplugin={};
+        tmpplugin['name'] = plugin;
+        plugins.push(tmpplugin);
+    });
+    Plugin.getNamesByQuery({"$or":plugins}, {}, function(err, data){
+        if(err){
+            next(err);
+        }
+        var tmplist = [];
+        data.forEach(function (plugin){
+           tmplist.push(plugin.id);
+        });
+        ep.emit('plugin_id',tmplist);
+    });
 };
 
 exports.verifyName = function(req,res,next){

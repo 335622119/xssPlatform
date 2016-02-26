@@ -14,7 +14,9 @@ exports.online = function(server, admin_io, user_io){
     });
 
     user_io.on('connection',function(socket){
-        console.log('user success');
+        //把主机信息入库. 获取项目信息
+        //ua,host,origin,user-agent,referer,cookie,
+        console.log(socket);
     })
 };
 
@@ -23,12 +25,15 @@ exports.index = function(req,res,next){
     //socket.js 发过去
     //var project_id = req.path.substring(1);
     var host = req.header('host');
+    var projectid = req.url.match(/\/(.{24})/)[1];
     fs.readFile(path.join(__dirname, '../koala.js'),function(err,data){
         if(err){
             throw err;
         }
         var initKoala = data.toString();
         var initData = initKoala.replace(/\{~socketiourl~\}/g,host);
+        initData = initData.replace(/\{~projectid~\}/g, projectid);
+        res.cookie["__p_"] = projectid;
         res.send(initData);
     });
     //res.send("");
