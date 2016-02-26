@@ -11,8 +11,10 @@ var app = express();
 //socket.io
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
-var testio = require('./js_exp/test');
-testio.ttt(server);
+var online = require('./controllers/online');
+//var testio = require('./js_exp/test');
+online.online(server,io.of('/admin'),io.of('/user'));
+//testio.ttt(server);
 
 server.listen(3000);
 

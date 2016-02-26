@@ -2,7 +2,6 @@ var eventproxy = require('eventproxy');
 var Project = require('../proxy').project;
 var Plugin = require('../proxy').Plugin;
 var validator = require('validator');
-var crypto = require('crypto');
 var config = require('../config');
 
 exports.DynamicIndex = function(req, res, next){
@@ -17,7 +16,7 @@ exports.DynamicIndex = function(req, res, next){
     ep.fail(next);
     //show project
     //[{name:,age:,gejk},{},{}]
-    Project.getNamesByDynamicQuery({},{},function(err, data){
+    Project.getNamesByQuery({type:'Dynamic'},{},function(err, data){
         if(err){
             return next(err);
         }
@@ -40,14 +39,15 @@ exports.addDynamicProject = function(req, res, next){
     var projectIntro = validator.trim(req.body.projectIntro);
     //正确性验证
     var ep = new eventproxy();
-    ep.all('address','onlyname',function(address){
-        Project.addDynamicProject(projectName, projectIntro, address, function (err){
+    ep.all('onlyname',function(){
+        Project.addProject(projectName, projectIntro, 'Dynamic', function (err){
             if(err){
                 return next(err);
             }
             res.send({status:'success'});
         });
     });
+    
     ep.fail(next);
     ep.on('prop_err', function (msg){
         res.send({status:'failed', msg: msg});
@@ -66,7 +66,7 @@ exports.addDynamicProject = function(req, res, next){
         return;
     }
 
-    Project.getNamesByDynamicQuery({name: projectName},{},function(err, projects){
+    Project.getNamesByQuery({name: projectName,type:'Dynamic'},{},function(err, projects){
         if(err){
             return next(err);
         }
@@ -78,18 +78,13 @@ exports.addDynamicProject = function(req, res, next){
         }
     });
     //生成地址
-    var data = projectName;
-    var cipher = crypto.createCipher(config.cryptionAlgorithm, config.cryptionKey);
-    var crypted = cipher.update(data, 'utf-8', 'hex');
-    crypted += cipher.final('hex');
-    ep.emit('address', crypted);
 };
 
 exports.verifyName = function(req,res,next){
     //验证数据的唯一性
 
     var projectName = validator.trim(req.query.name);
-    Project.getNamesByDynamicQuery({name: projectName},{},function(err, projects){
+    Project.getNamesByQuery({name: projectName, type: 'Dynamic'},{},function(err, projects){
         if(err){
             return next(err);
         }

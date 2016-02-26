@@ -1,19 +1,20 @@
 var models = require('../models');
-var DynamicProject = models.DynamicProject;
+var Project = models.Project;
 
-exports.addDynamicProject = function (name, introduce, address, callback){
-    var dynamicProject = new DynamicProject();
-    dynamicProject.name = name;
-    dynamicProject.introduce = introduce;
-    dynamicProject.address = address;
+exports.addProject = function (name, introduce, type, callback){
+    var project = new Project();
+    project.name = name;
+    project.introduce = introduce;
+    project.type = type;
 
-    dynamicProject.save(callback);
+    project.save(callback);
 };
 
-exports.getOneByDynamicProject = function(name, callback){
-    DynamicProject.findOne({name: name}, callback);
+exports.updateProject = function(conditions, update, opt, callback){
+    Project.update(conditions,update,opt,callback);
 };
 
-exports.getNamesByDynamicQuery = function (query, opt, callback){
-    DynamicProject.find(query, '', opt, callback);
+
+exports.getNamesByQuery = function (query, opt, callback){
+    Project.find(query, '', opt, callback);
 };

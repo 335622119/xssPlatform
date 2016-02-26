@@ -1,37 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>AdminLTE 2 | Data Tables</title>
-    <!-- Tell the browser to be responsive to screen width -->
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <!-- Bootstrap 3.3.5 -->
-    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    <!-- Ionicons -->
-    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-    <!-- DataTables -->
-    <link rel="stylesheet" href="plugins/datatables/dataTables.bootstrap.css">
-    <!-- Theme style -->
-    <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
-    <!-- AdminLTE Skins. Choose a skin from the css/skins
-         folder instead of downloading all of them to reduce the load. -->
-    <link rel="stylesheet" href="dist/css/skins/_all-skins.min.css">
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    <% include head.ejs %>
   </head>
   <body class="hold-transition skin-blue sidebar-mini">
-    <% include backgroundProject.ejs %>
-    <div class="wrapper">
-      <!--添加项目背景div-->
-
+  <% include execJSDiv.ejs %>
+  <div class="wrapper">
       <header class="main-header">
         <!-- Logo -->
         <a href="index2.html" class="logo">
@@ -289,9 +263,6 @@
       <% include sidebar.ejs %>
       <!-- Content Wrapper. Contains page content -->
       <div class="content-wrapper">
-
-        <!--添加项目div-->
-        <% include addPlugin.ejs %>
         <!-- Content Header (Page header) -->
         <section class="content-header">
           <h1>
@@ -312,15 +283,15 @@
               <div class="box">
                 <div class="box-header">
                   <h3 class="box-title">Data Table With Full Features</h3>
-                  <button class="btn btn-default btn-sm" id="addPluginBtn">添加项目</button>
-                  <button class="btn btn-primary btn-sm">批量删除</button>
+                  <button class="btn btn-primary btn-sm" style="float: right">批量删除</button>
                 </div><!-- /.box-header -->
                 <div class="box-body">
                   <table id="example1" class="table table-bordered table-striped">
                     <thead>
                       <tr>
                         <th>项目名称</th>
-                        <th>项目地址</th>
+                        <th>主机地址</th>
+                        <th>状态</th>
                         <th>创建时间</th>
                         <th>更新时间</th>
                         <th>操作</th>
@@ -331,32 +302,13 @@
                         <td>Trident</td>
                         <td>Internet
                           Explorer 4.0</td>
+                        <td>Internet
+                          Explorer 4.0</td>
                         <td>Win 95+</td>
                         <td> 4</td>
                         <td>X</td>
                       </tr>
-                      <tr>
-                        <td>Test</td>
-                        <td>http://www.baidu.com/ser.js</td>
-                        <td>2015-04-03</td>
-                        <td>2015-04-03</td>
-                        <td>
-                          <a class="glyphicon glyphicon-edit" href="#"></a>
-                          <a class="glyphicon glyphicon-trash" href="#"></a>
-
-                        </td>
-                      </tr>
-
                     </tbody>
-                    <tfoot>
-                      <tr>
-                        <th>Rendering engine</th>
-                        <th>Browser</th>
-                        <th>Platform(s)</th>
-                        <th>Engine version</th>
-                        <th>CSS grade</th>
-                      </tr>
-                    </tfoot>
                   </table>
                 </div><!-- /.box-body -->
               </div><!-- /.box -->
@@ -553,6 +505,8 @@
     <script src="dist/js/app.min.js"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="dist/js/demo.js"></script>
+    <script src="/dist/js/socket.io.js"></script>
+    <script src="dist/js/execJS.js"></script>
     <!-- page script -->
     <script>
       $(function () {
@@ -564,17 +518,6 @@
           "ordering": true,
           "info": true,
           "autoWidth": false
-        });
-      });
-    </script>
-    <script>
-      $(document).ready(function(){
-
-        var addPlugin = document.getElementById('addPlugin');
-        var layoutBg = document.getElementById('layoutBg');
-        $("#addPluginBtn").click(function (){
-          $("#addPlugin").css('display', 'block');
-          $("#layoutBg").css('display', 'block');
         });
       });
     </script>

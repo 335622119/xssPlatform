@@ -13,8 +13,9 @@ mongoose.connect(config.db, {
 
 //models
 require('./plugin');
-require('./DynamicProject');
+require('./project');
+require('./pc');
 
 exports.Plugin = mongoose.model('Plugin');
-exports.DynamicProject = mongoose.model('DynamicProject');
-
+exports.Project = mongoose.model('Project');
+exports.PC = mongoose.model('PC');

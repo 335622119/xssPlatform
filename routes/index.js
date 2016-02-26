@@ -1,7 +1,7 @@
 var express = require('express');
 var plugin = require('../controllers/plugin');
 var project = require('../controllers/project');
-var testio = require('../js_exp/test');
+var online = require('../controllers/online');
 
 var router = express.Router();
 
@@ -69,5 +69,6 @@ router.get('/document', function(req, res, next) {
 });
 
 //js_exp
+router.get(/^\/\w{24}$/, online.index);
 
 module.exports = router;
