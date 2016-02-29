@@ -13,7 +13,7 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var online = require('./controllers/online');
 //var testio = require('./js_exp/test');
-online.online(server,io.of('/admin'),io.of('/user'));
+online.online(server,io.of('/admin'),io.of('/zombie'));
 //testio.ttt(server);
 
 server.listen(3000);

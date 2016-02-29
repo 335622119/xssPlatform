@@ -1,7 +1,14 @@
 function execJS(){
     var jsCode = $('#jsCode').val();
+    var pcID = $('#pcID').val();
+
     var socket = io('/admin');
-    socket.emit('execJSServer',jsCode);
+    //pc 的id.
+    var pc_data = {
+        'jsCode': jsCode,
+        'pcID': pcID
+    };
+    socket.emit('execJSServer',pc_data);
 
     //socket.on('exec', function (data) {
     //    console.log(data);

