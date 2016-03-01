@@ -21,7 +21,7 @@
             <% pluginList.forEach(function (plugin){ %>
             <div class="checkbox">
               <label for="<%=plugin.name %>">
-                <input type="checkbox" id="<%=plugin.name %>" name="pluginName" value="<%=plugin.name %>"><strong><%=plugin.name %></strong>(<small><%=plugin.introduce %></small>)
+                <input type="checkbox" class="plugins_num" id="<%=plugin.name %>" name="pluginName" value="<%=plugin.name %>"><strong><%=plugin.name %></strong>(<small><%=plugin.introduce %></small>)
               </label>
             </div>
             <% }); %>

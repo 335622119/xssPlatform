@@ -288,7 +288,7 @@
                 <div class="box-header">
                   <h3 class="box-title">Data Table With Full Features</h3>
                   <button class="btn btn-primary btn-sm" style="float: right">批量删除</button>
-                  <button class="btn btn-default btn-sm" id="addProBtn" style="float: right" data-toggle="modal" data-target="#addProjectDiv">添加项目</button>
+                  <button class="btn btn-default btn-sm" id="addProBtn" style="float: right" data-toggle="modal" data-target="#addProjectDiv" onclick="verify_plugins_num()">添加项目</button>
                 </div><!-- /.box-header -->
                 <div class="box-body">
                   <table id="example1" class="table table-bordered table-striped">
@@ -512,6 +512,13 @@
     <script src="dist/js/add.js"></script>
     <!-- page script -->
     <script>
+      function verify_plugins_num(){
+        //获取plugin数量.
+        if($('.plugins_num').val() == undefined){
+          alert('请先添加插件!');
+          location.href=location.href;
+        };
+      }
       $(function () {
         $("#example1").DataTable();
         $('#example2').DataTable({

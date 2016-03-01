@@ -42,7 +42,6 @@ exports.addDynamicProject = function(req, res, next){
     //正确性验证
     var ep = new eventproxy();
     ep.all('plugin_id','onlyname',function(plugin_id){
-        console.log(plugin_id);
         Project.addProject(projectName, projectIntro, 'Dynamic', plugin_id, function (err){
             if(err){
                 return next(err);
@@ -85,11 +84,17 @@ exports.addDynamicProject = function(req, res, next){
     //获取id,形成对象数组,带入proxy.
     var plugins = [];
     var pluginName = req.body.pluginName;
-    pluginName.forEach(function(plugin){
-        var tmpplugin={};
-        tmpplugin['name'] = plugin;
-        plugins.push(tmpplugin);
-    });
+    console.log(typeof pluginName);
+    if(typeof pluginName != 'string'){
+        pluginName.forEach(function(plugin){
+            var tmpplugin={};
+            tmpplugin['name'] = plugin;
+            plugins.push(tmpplugin);
+        });
+    }else{
+        plugins=[{name:req.body.pluginName}];
+    }
+    //获取pluginid
     Plugin.getNamesByQuery({"$or":plugins}, {}, function(err, data){
         if(err){
             next(err);

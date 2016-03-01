@@ -9,5 +9,3 @@ var PluginSchema = new Schema({
 });
 
 mongoose.model('Plugin', PluginSchema);
-
-
