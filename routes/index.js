@@ -3,6 +3,7 @@ var plugin = require('../controllers/plugin');
 var project = require('../controllers/project');
 var online = require('../controllers/online');
 var pc = require('../controllers/pc');
+var pcinfo = require('../controllers/pcinfo');
 
 var router = express.Router();
 
@@ -35,7 +36,7 @@ router.get('/DynamicPC', pc.DynamicPCIndex);
 router.get('/StaticPC', function(req, res, next) {
     res.render('pages/PC', { title: 'Express', changeItem: 'PC,StaticPC' });
 });
-
+router.get('/getPCInfo',pcinfo.getPCInfo);
 
 
 //plugin router

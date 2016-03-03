@@ -8,8 +8,9 @@ var pcSchema = new Schema({
     zombie_ua: {type: String},
     status:{type:Boolean},
     socket_id:{type: String},
-    create_time: {type: Date,default: Date.now},
-    update_time: {type: Date,default: Date.now}
+    create_time: {type: String,default: Date.now},
+    update_time: {type: String,default: Date.now},
+    pc_info: [{type:String}]
 });
 
 mongoose.model('PC', pcSchema);

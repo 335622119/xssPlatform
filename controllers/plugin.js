@@ -26,6 +26,8 @@ exports.index = function(req, res, next){
 
 exports.addPlugin = function (req, res, next){
     //req 进行验证
+    //var plugincode = new Buffer(req.body.pluginCode, 'base64').toString('ascii');
+    var plugincode = decodeURIComponent(req.body.pluginCode);
     var pluginName = validator.trim(req.body.pluginName);
     var pluginIntro = validator.trim(req.body.pluginIntro);
     //正确性验证
@@ -57,7 +59,7 @@ exports.addPlugin = function (req, res, next){
             ep.emit('prop_err', '插件名称存在');
             return;
         }else{
-            Plugin.addPlugin(pluginName, pluginIntro, req.body.pluginCode, function (err){
+            Plugin.addPlugin(pluginName, pluginIntro, plugincode, function (err){
                 if(err){
                     return next(err);
                 }

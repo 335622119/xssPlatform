@@ -1,28 +1,21 @@
 var socket = io('/admin');
 socket.on('updatePC',function(data){
-    //data {}
-    if(data.name == undefined){
-        console.log('error!');
-    }else{
-        updateTable();
+    //在主机页面的话 就刷新
+    if(location.pathname == '/DynamicPC'){
+        location.reload();
     }
 });
 
-function appendTable(){
-    //
+$('#pcInfo').on('hide.bs.modal',function(){
+   location.reload();
+});
+
+function updatePCInfo(pc_id){
+    //callback $('#pcinfolist').append('<div>1.获取cookie信息</div><pre>zhjk:asdfsdf</pre>')
+    $.get('/getPCInfo?id='+pc_id,function(data){
+        for(var i=1;i<data.length+1;i++){
+            var data_code = data[i-1].pc_info.data == ''?'空':data[i-1].pc_info.data;
+            $('#pcinfolist').append('<div>'+i+'.'+data[i-1].pc_info.plugin_name+'</div><pre>'+data_code+'</pre>')
+        }
+    })
 }
-
-
-    //$('#example1 tbody tr').remove();
-    //var test = "<tr><td>Trident</td><td>0</td><td>I.0</td><td>Win 95+</td><td> 4</td><td>X</td></tr>";
-    //$('#pc_table tbody tr:last').after(test);
-    //$('#example1 tbody').append(test)
-
-function updateTable(){
-    //如果没有了 刷新页面 如果有 也是remove 再append.
-
-}
-
-//新增一行
-//var test = "<tr><td>Trident</td><td>0</td><td>I.0</td><td>Win 95+</td><td> 4</td><td>X</td></tr>";
-//$('#pc_table tbody tr:last').after(test);

@@ -1,5 +1,15 @@
+$('#addProjectDiv').on('hide.bs.modal',function(){
+    location.reload();
+});
+
+$('#addPluginDiv').on('hide.bs.modal',function(){
+    location.reload();
+});
+
+
 function addPlugin(url){
-    $.post(url, $("#addPluginForm").serialize()+mainEditor.doc.getValue(), function(res){
+    var trans_data = encodeURIComponent(mainEditor.doc.getValue());
+    $.post(url, $("#addPluginForm").serialize()+trans_data, function(res){
         if (res.status == 'success'){
             alert('success!');
         }else {

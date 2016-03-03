@@ -8,6 +8,7 @@ exports.DynamicIndex = function(req, res, next){
     var ep = new eventproxy();
     var host = req.header('host');
     ep.all('project','plugin',function(project, plugin){
+        console.log(project)
         res.render('pages/project',{
             changeItem: 'project,DynamicProject',
             projectList: project,
@@ -84,7 +85,6 @@ exports.addDynamicProject = function(req, res, next){
     //获取id,形成对象数组,带入proxy.
     var plugins = [];
     var pluginName = req.body.pluginName;
-    console.log(typeof pluginName);
     if(typeof pluginName != 'string'){
         pluginName.forEach(function(plugin){
             var tmpplugin={};

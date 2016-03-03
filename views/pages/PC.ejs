@@ -6,6 +6,7 @@
   <body class="hold-transition skin-blue sidebar-mini">
   <% include execJSDiv.ejs %>
   <div class="wrapper">
+    <% include pcInfo.ejs %>
       <header class="main-header">
         <!-- Logo -->
         <a href="index2.html" class="logo">
@@ -301,7 +302,7 @@
                       <% pcList.forEach(function(pc){ %>
                       <tr>
                         <td><%= pc.project_name %></td>
-                        <td><%= pc.zombie_url %></td>
+                        <td style="cursor:pointer;" data-toggle="modal" data-target="#pcInfo" onclick="updatePCInfo('<%= pc.socket_id %>')"><%= pc.zombie_url %></td>
                         <td><% if (pc.status) {%><p class="text-green">在线</p><%}else{%><p class="text-muted">离线</p><%}%></td>
                         <td><%= pc.create_time %></td>
                         <td><%= pc.update_time %></td>

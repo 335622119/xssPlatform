@@ -1,7 +1,33 @@
-$.getScript('//{~socketiourl~}/dist/js/socket.io.js',initK);
-function initK(){
+
+$.getScript('//{~socketiourl~}/dist/js/socket.io.js',function(){
+    var Koalas,
+        bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+    Koalas = (function() {
+        function Koalas(name1) {
+            this.send = bind(this.send, this);
+            this.sell = bind(this.sell, this);
+            this.name = name;
+        }
+
+        Koalas.prototype.sell = function() {
+            return alert("test " + this.name + " !!");
+        };
+
+        Koalas.prototype.send = function(plugin_name, data) {
+            var getData = {
+                plugin_name: plugin_name,
+                data: data
+            }
+            socket.emit('trans_data', getData);
+        };
+
+        return Koalas;
+
+    })();
+
     var data;
-    var socket = io.connect('//{~socketiourl~}/zombie');
+    socket = io.connect('//{~socketiourl~}/zombie');
     var cookie = document.cookie;
 
     window.onbeforeunload = function() {
@@ -21,4 +47,5 @@ function initK(){
         var callbackData = eval(data);
         socket.emit('callbackExec', callbackData);
     });
-}
+
+    var koalas = new Koalas('test');

@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "koalas.js",
+  "sourceRoot": "",
+  "sources": [
+    "koalas.coffee"
+  ],
+  "names": [],
+  "mappings": ";AAAA;AAAA,MAAA,MAAA;IAAA;;EAAM;IACS,gBAAC,IAAD,EAAM,QAAN;;;MACX,IAAC,CAAA,IAAD,GAAQ;MACR;IAFW;;qBAGb,IAAA,GAAM,SAAA;aACJ,KAAA,CAAM,OAAA,GAAQ,IAAC,CAAA,IAAT,GAAc,KAApB;IADI;;qBAGN,IAAA,GAAM,SAAC,IAAD;aACJ,MAAM,CAAC,IAAP,CAAY,YAAZ,EAAyB,IAAzB;IADI;;;;;AAPR"
+}

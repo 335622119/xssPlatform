@@ -15,7 +15,9 @@ mongoose.connect(config.db, {
 require('./plugin');
 require('./project');
 require('./pc');
+require('./pc_info');
 
 exports.Plugin = mongoose.model('Plugin');
 exports.Project = mongoose.model('Project');
 exports.PC = mongoose.model('PC');
+exports.PCInfo = mongoose.model('PC_Info');
